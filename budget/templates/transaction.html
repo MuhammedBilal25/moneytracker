@@ -1,0 +1,119 @@
+{%extends 'base.html'%}
+{%block title_block%}
+<title>Transactions</title>
+{%endblock%}
+{%block main_block%}
+<h1 class="text-center fw-bolder mt-5">ExpenseTracker</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-4"></div>
+            <div class="col-6">
+                <div style="width: 400px; height: 400px; " class="">
+                <canvas id="categoryChart" width="200" height="200"></canvas>
+            </div></div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+    <div class="container d-flex justify-content-center">
+        {%for tp in type_total%}
+                <div class="border px-4 mt-5 mx-3">
+                    <h2 class="fw-bold">Total {{tp.type}}</h2>
+                    <h3>{{tp.type_total}}</h3>
+                </div>
+                {%endfor%}
+    </div>
+    <div class="container d-flex justify-content-center">
+        {%for tp in cat_data%}
+                <div class="border px-4 mt-5 mx-3">
+                    <h3 class="fw-bold">Total {{tp.category}}</h3>
+                    <h4>{{tp.cat_sum}}</h4>
+                </div>
+                {%endfor%}
+    </div>
+    
+
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-3"></div>
+            <div class="col-6">
+                
+
+                <h3 class="fw-bold text-center">History</h3>
+                {{request.user}}
+                
+               {%for t in data%}
+
+               <div class="card mb-2" data-aos="zoom-in-up">
+                <div class="card-body">
+                   <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-6 d-flex justify-content-center">
+                        {{t.title}}
+                        {{t.category}}
+                        {{t.amount}}
+                    </div>
+                    <div class="col-4 d-flex justify-content-evenly">
+                            <a href="{%url 'trasation-detail' t.id%}"><i class="fa-regular fa-eye fa-1x text-primary"></i></a>
+                            <a href="{%url 'transaction-edit' t.id%}"><i class="fa-solid fa-pen-to-square fa-1x text-warning"></i></a>
+                            <a href="{%url 'delete-transaction' t.id%}"><i class="fa-solid fa-trash fa-1x text-danger"></i></a>
+                    </div>
+                   </div> 
+                   
+                </div>
+              </div>
+               {%endfor%}
+                  
+            </div>
+            
+            <div class="col-3"></div>
+            <a href="{%url 'create-transaction'%}">add transation</a>
+        
+        </div>
+        <a href="{%url 'signout'%}">LOGOUT</a>
+    </div>
+{%endblock%}
+{%block script_block%}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('categoryChart').getContext('2d');
+    var categoryChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [{% for category in cat_data %}"{{ category.category }}",{% endfor %}],
+            datasets: [{
+                label: 'Category Totals',
+                data: [{% for category in cat_data %}{{ category.cat_sum }},{% endfor %}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutQuart'
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{%endblock%}
+</html>
